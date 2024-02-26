@@ -89,6 +89,8 @@ export async function POST(
     const address = requirement[1]
     const tokenId = requirement[2]
 
+    console.log('fid', message.interactor.fid, 'wallets', wallets)
+
     const oP = await checkOwnership(wallets, chain, address, tokenId)
     if (oP) {
       ownershipPassed = true
