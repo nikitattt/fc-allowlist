@@ -25,7 +25,7 @@ const allowlistCollectionData = [
   },
   {
     id: 'outcasts',
-    requirements: ['base:0x66F3c79166Cc7049Da0B4C43038ca49fED98c568']
+    requirements: ['base:0x73682A7f47Cb707C52cb38192dBB9266D3220315']
   }
 ]
 
@@ -43,7 +43,8 @@ export async function POST(
     return new NextResponse('Unauthorized', { status: 401 })
   }
 
-  const wallets = message.interactor.verified_addresses.eth_addresses
+  // const wallets = message.interactor.verified_addresses.eth_addresses
+  const wallets = ['0xd4bf6958538f26266ef2a32db47d296323734b5a']
 
   if (!wallets || wallets.length === 0) {
     const imageUrl = `${process.env.HOST}/no-wallets.jpg`
