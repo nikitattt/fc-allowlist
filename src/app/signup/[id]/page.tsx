@@ -42,6 +42,17 @@ export default function Home({ params }: { params: { id: string } }) {
         {/* <Link href="/" className="mt-20 text-green-500 underline">
           Make for my video
         </Link> */}
+        <div className="mt-12">
+          <p>
+            Access:{' '}
+            <a
+              href="https://warpcast.com/iamng"
+              className="text-purple-400 underline"
+            >
+              @iamng
+            </a>
+          </p>
+        </div>
       </div>
     </main>
   )
