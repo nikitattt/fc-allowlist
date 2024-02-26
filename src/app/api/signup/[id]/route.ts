@@ -43,8 +43,8 @@ export async function POST(
     return new NextResponse('Unauthorized', { status: 401 })
   }
 
-  // const wallets = message.interactor.verified_addresses.eth_addresses
-  const wallets = ['0xd4bf6958538f26266ef2a32db47d296323734b5a']
+  const wallets = message.interactor.verified_addresses.eth_addresses
+  // const wallets = ['0xd4bf6958538f26266ef2a32db47d296323734b5a']
 
   if (!wallets || wallets.length === 0) {
     const imageUrl = `${process.env.HOST}/no-wallets.jpg`
