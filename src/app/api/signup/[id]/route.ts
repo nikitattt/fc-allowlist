@@ -14,7 +14,10 @@ export const dynamic = 'force-dynamic'
 const allowlistCollectionData = [
   {
     id: 'groupies',
-    requirements: ['base:0x2ad08B1132cB4f969361FD0Aa9beeB8e55776Bbc:1']
+    requirements: [
+      'eth:0x4f89Cd0CAE1e54D98db6a80150a824a533502EEa',
+      'base:0x2ad08B1132cB4f969361FD0Aa9beeB8e55776Bbc:1'
+    ]
   },
   {
     id: 'jeeves',
@@ -40,9 +43,9 @@ export async function POST(
     return new NextResponse('Unauthorized', { status: 401 })
   }
 
-  const wallets = message.interactor.verified_accounts
+  const wallets = message.interactor.verified_addresses.eth_addresses
 
-  if (wallets.length === 0) {
+  if (!wallets || wallets.length === 0) {
     const imageUrl = `${process.env.HOST}/no-wallets.jpg`
 
     return new NextResponse(
@@ -136,8 +139,8 @@ export async function POST(
       `<!DOCTYPE html>
       <html>
         <head>
-          <title>Watch the video!</title>
-          <meta property="og:title" content="You can watch the video!" />
+          <title>Success!</title>
+          <meta property="og:title" content="You signed up to allowlist!" />
           <meta property="og:image" content="${imageUrl}" />
           <meta property="fc:frame" content="vNext" />
           <meta property="fc:frame:image" content="${imageUrl}" />

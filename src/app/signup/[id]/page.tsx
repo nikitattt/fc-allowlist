@@ -12,6 +12,7 @@ export async function generateMetadata({
   const postUrl = `${process.env.HOST}/api/signup/${id}`
 
   return {
+    metadataBase: new URL(process.env.HOST!),
     title: 'Allowlist',
     description: 'Sign Up to allowlist',
     openGraph: {
