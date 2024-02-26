@@ -29,6 +29,8 @@ export async function generateMetadata({
 }
 
 export default function Home({ params }: { params: { id: string } }) {
+  const displayName = params.id.charAt(0).toUpperCase() + params.id.slice(1)
+
   return (
     <main className="flex flex-col text-center p-8 lg:p-16">
       <div className="flex flex-col">
@@ -37,14 +39,14 @@ export default function Home({ params }: { params: { id: string } }) {
           Sign up to allowlist
         </h1>
         <div className="mt-12">
-          <p className="max-w-lg mx-auto">{params.id}</p>
+          <p className="max-w-lg mx-auto">For {displayName}</p>
         </div>
         {/* <Link href="/" className="mt-20 text-green-500 underline">
           Make for my video
         </Link> */}
         <div className="mt-12">
           <p>
-            Access:{' '}
+            Support:{' '}
             <a
               href="https://warpcast.com/iamng"
               className="text-purple-400 underline"
