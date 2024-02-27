@@ -33,168 +33,190 @@ export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const body: FrameRequest = await req.json()
+  const imageUrl = `${process.env.HOST}/allowlist-closed.jpg`
 
-  const { isValid, message } = await getFrameMessage(body, {
-    neynarApiKey: NEYNAR_KEY
-  })
-
-  if (!isValid) {
-    return new NextResponse('Unauthorized', { status: 401 })
-  }
-
-  const wallets = message.interactor.verified_addresses.eth_addresses
-  // const wallets = ['0xd4bf6958538f26266ef2a32db47d296323734b5a']
-
-  if (!wallets || wallets.length === 0) {
-    const imageUrl = `${process.env.HOST}/no-wallets.jpg`
-
-    return new NextResponse(
-      `<!DOCTYPE html>
+  return new NextResponse(
+    `<!DOCTYPE html>
       <html>
         <head>
-          <title>No wallets!</title>
-          <meta property="og:title" content="You need to add at least 1 wallet!" />
+          <title>Allowlist Closed!</title>
+          <meta property="og:title" content="Allowlist Closed!" />
           <meta property="og:image" content="${imageUrl}" />
           <meta property="fc:frame" content="vNext" />
           <meta property="fc:frame:image" content="${imageUrl}" />
         </head>
         <body />
       </html>`,
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'text/html'
-        }
+    {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/html'
       }
-    )
-  }
-
-  // console.log(wallets)
-
-  const id = params.id
-
-  const data = allowlistCollectionData.find((d) => d.id === id)
-
-  if (!data) {
-    return new NextResponse('Not found', { status: 404 })
-  }
-
-  // console.log(data)
-
-  let ownershipPassed = false
-
-  for (const req of data.requirements) {
-    const requirement = req.split(':')
-    const chain = requirement[0]
-    const address = requirement[1]
-    const tokenId = requirement[2]
-
-    console.log('fid', message.interactor.fid, 'wallets', wallets)
-
-    const oP = await checkOwnership(wallets, chain, address, tokenId)
-    if (oP) {
-      ownershipPassed = true
-
-      const userFid = message.interactor.fid
-
-      const redisKey = `allowlist-${id}-${userFid}`
-      const redisData = {
-        user: message.interactor
-      }
-
-      const res = await redisClient.set(redisKey, JSON.stringify(redisData))
-      res === 'OK'
-        ? console.log(`redis allowlist sign up with fid ${userFid}`)
-        : console.error(`fail: redis allowlist sign up with fid ${userFid}`)
-
-      break
     }
-  }
+  )
 
-  // const requirement = data.requirements.split(':')
-  // const chain = requirement[0]
-  // const address = requirement[1]
-  // const tokenId = requirement[2]
+  //   const body: FrameRequest = await req.json()
 
-  // const ownershipPassed = await checkOwnership(wallets, chain, address, tokenId)
+  //   const { isValid, message } = await getFrameMessage(body, {
+  //     neynarApiKey: NEYNAR_KEY
+  //   })
 
-  let response
+  //   if (!isValid) {
+  //     return new NextResponse('Unauthorized', { status: 401 })
+  //   }
 
-  if (ownershipPassed) {
-    // const postUrl = `https://lvpr.tv?v=${data.playbackId}`
-    const imageUrl = `${process.env.HOST}/allowlist-signup-success.jpg`
+  //   const wallets = message.interactor.verified_addresses.eth_addresses
+  //   // const wallets = ['0xd4bf6958538f26266ef2a32db47d296323734b5a']
 
-    // let videoMeta = ``
+  //   if (!wallets || wallets.length === 0) {
+  //     const imageUrl = `${process.env.HOST}/no-wallets.jpg`
 
-    // if (data.playbackUrl) {
-    //   videoMeta = `
-    //   <meta property="fc:frame:video" content="${data.playbackUrl}" />
-    //   <meta property="fc:frame:video:type" content="application/x-mpegURL" />`
-    // }
+  //     return new NextResponse(
+  //       `<!DOCTYPE html>
+  //       <html>
+  //         <head>
+  //           <title>No wallets!</title>
+  //           <meta property="og:title" content="You need to add at least 1 wallet!" />
+  //           <meta property="og:image" content="${imageUrl}" />
+  //           <meta property="fc:frame" content="vNext" />
+  //           <meta property="fc:frame:image" content="${imageUrl}" />
+  //         </head>
+  //         <body />
+  //       </html>`,
+  //       {
+  //         status: 200,
+  //         headers: {
+  //           'Content-Type': 'text/html'
+  //         }
+  //       }
+  //     )
+  //   }
 
-    // <meta property="fc:frame:button:1" content="Watch in browser" />
-    //       <meta property="fc:frame:button:1:action" content="link" />
-    //       <meta property="fc:frame:button:1:target" content="${postUrl}" />
-    //       ${videoMeta}
+  //   // console.log(wallets)
 
-    response = new NextResponse(
-      `<!DOCTYPE html>
-      <html>
-        <head>
-          <title>Success!</title>
-          <meta property="og:title" content="You signed up to allowlist!" />
-          <meta property="og:image" content="${imageUrl}" />
-          <meta property="fc:frame" content="vNext" />
-          <meta property="fc:frame:image" content="${imageUrl}" />
-        </head>
-        <body />
-      </html>`,
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'text/html'
-        }
-      }
-    )
-  } else {
-    // const openseaChain = chain === 'eth' ? 'ethereum' : chain
+  //   const id = params.id
 
-    // const imageUrl = `${process.env.HOST}/api/images/no-pass/${id}`
-    // const collectionLink = tokenId
-    //   ? `https://opensea.io/assets/${openseaChain}/${address}/${tokenId}`
-    //   : `https://opensea.io/assets/${openseaChain}/${address}`
+  //   const data = allowlistCollectionData.find((d) => d.id === id)
 
-    const imageUrl = `${process.env.HOST}/allowlist-no-nft.jpg`
+  //   if (!data) {
+  //     return new NextResponse('Not found', { status: 404 })
+  //   }
 
-    // <meta property="fc:frame:button:1" content="See Collection" />
-    // <meta property="fc:frame:button:1:action" content="link" />
-    // <meta property="fc:frame:button:1:target" content="${collectionLink}" />
+  //   // console.log(data)
 
-    response = new NextResponse(
-      `<!DOCTYPE html>
-      <html>
-        <head>
-          <title>Oops, no access!</title>
-          <meta property="og:title" content="Access haven't been granted to you." />
-          <meta property="og:image" content="${imageUrl}" />
-          <meta property="fc:frame" content="vNext" />
-          <meta property="fc:frame:image" content="${imageUrl}" />
-        </head>
-        <body />
-      </html>`,
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'text/html'
-        }
-      }
-    )
-  }
+  //   let ownershipPassed = false
 
-  // response.headers.set('Cache-Control', 'max-age=900, stale-while-revalidate')
+  //   for (const req of data.requirements) {
+  //     const requirement = req.split(':')
+  //     const chain = requirement[0]
+  //     const address = requirement[1]
+  //     const tokenId = requirement[2]
 
-  return response
+  //     console.log('fid', message.interactor.fid, 'wallets', wallets)
+
+  //     const oP = await checkOwnership(wallets, chain, address, tokenId)
+  //     if (oP) {
+  //       ownershipPassed = true
+
+  //       const userFid = message.interactor.fid
+
+  //       const redisKey = `allowlist-${id}-${userFid}`
+  //       const redisData = {
+  //         user: message.interactor
+  //       }
+
+  //       const res = await redisClient.set(redisKey, JSON.stringify(redisData))
+  //       res === 'OK'
+  //         ? console.log(`redis allowlist sign up with fid ${userFid}`)
+  //         : console.error(`fail: redis allowlist sign up with fid ${userFid}`)
+
+  //       break
+  //     }
+  //   }
+
+  //   // const requirement = data.requirements.split(':')
+  //   // const chain = requirement[0]
+  //   // const address = requirement[1]
+  //   // const tokenId = requirement[2]
+
+  //   // const ownershipPassed = await checkOwnership(wallets, chain, address, tokenId)
+
+  //   let response
+
+  //   if (ownershipPassed) {
+  //     // const postUrl = `https://lvpr.tv?v=${data.playbackId}`
+  //     const imageUrl = `${process.env.HOST}/allowlist-signup-success.jpg`
+
+  //     // let videoMeta = ``
+
+  //     // if (data.playbackUrl) {
+  //     //   videoMeta = `
+  //     //   <meta property="fc:frame:video" content="${data.playbackUrl}" />
+  //     //   <meta property="fc:frame:video:type" content="application/x-mpegURL" />`
+  //     // }
+
+  //     // <meta property="fc:frame:button:1" content="Watch in browser" />
+  //     //       <meta property="fc:frame:button:1:action" content="link" />
+  //     //       <meta property="fc:frame:button:1:target" content="${postUrl}" />
+  //     //       ${videoMeta}
+
+  //     response = new NextResponse(
+  //       `<!DOCTYPE html>
+  //       <html>
+  //         <head>
+  //           <title>Success!</title>
+  //           <meta property="og:title" content="You signed up to allowlist!" />
+  //           <meta property="og:image" content="${imageUrl}" />
+  //           <meta property="fc:frame" content="vNext" />
+  //           <meta property="fc:frame:image" content="${imageUrl}" />
+  //         </head>
+  //         <body />
+  //       </html>`,
+  //       {
+  //         status: 200,
+  //         headers: {
+  //           'Content-Type': 'text/html'
+  //         }
+  //       }
+  //     )
+  //   } else {
+  //     // const openseaChain = chain === 'eth' ? 'ethereum' : chain
+
+  //     // const imageUrl = `${process.env.HOST}/api/images/no-pass/${id}`
+  //     // const collectionLink = tokenId
+  //     //   ? `https://opensea.io/assets/${openseaChain}/${address}/${tokenId}`
+  //     //   : `https://opensea.io/assets/${openseaChain}/${address}`
+
+  //     const imageUrl = `${process.env.HOST}/allowlist-no-nft.jpg`
+
+  //     // <meta property="fc:frame:button:1" content="See Collection" />
+  //     // <meta property="fc:frame:button:1:action" content="link" />
+  //     // <meta property="fc:frame:button:1:target" content="${collectionLink}" />
+
+  //     response = new NextResponse(
+  //       `<!DOCTYPE html>
+  //       <html>
+  //         <head>
+  //           <title>Oops, no access!</title>
+  //           <meta property="og:title" content="Access haven't been granted to you." />
+  //           <meta property="og:image" content="${imageUrl}" />
+  //           <meta property="fc:frame" content="vNext" />
+  //           <meta property="fc:frame:image" content="${imageUrl}" />
+  //         </head>
+  //         <body />
+  //       </html>`,
+  //       {
+  //         status: 200,
+  //         headers: {
+  //           'Content-Type': 'text/html'
+  //         }
+  //       }
+  //     )
+  //   }
+
+  //   // response.headers.set('Cache-Control', 'max-age=900, stale-while-revalidate')
+
+  //   return response
 }
 
 export const GET = POST
